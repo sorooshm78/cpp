@@ -1,6 +1,10 @@
 # cpp
 learn and practice with cpp
 
+* [Object file](#object-file-obj-o)
+* [Keywords](#keywords)
+    * [Extern](#extern)
+
 ## Object File (*.obj, *.o)
 A C++ object file is an intermediate file produced by a C++ compiler from a C++ implementation file and the C++ header files that the implementation file includes. The C++ linker produces the output executable or library of your project from your C++ object files.
 
@@ -38,3 +42,6 @@ gcc -Wall -o bar.o -c bar.c              // Object file for bar.c
 gcc -Wall -o main.o -c main.c            // Object file for main.c
 gcc -Wall -o software foo.o bar.o main.o // Executable (foo + bar + main)
 ```
+
+## Keywords
+### Extern
