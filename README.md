@@ -331,3 +331,6 @@ Current time: 04:23:31
 ```
 
 This program prints the current time (GMT) using the __TIME__ macro.
+
+## Comments
+The compiler is never going to see commnet this because the preprocessor will see the comment and strip it out and just replace it with a single space
