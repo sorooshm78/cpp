@@ -20,3 +20,14 @@ To avoid naming confusion between PJSIP as organization name (as in PJSIP.ORG) a
 Below is architecture diagram of libraries in PJPROJECT. Click the link on the diagram to go to the documentation.
 
 ![](https://docs.pjsip.org/en/latest/pjsua2/intro.html)
+
+# PJSIP, PJMEDIA, and PJNATH Level
+At the lower level there are collection of C libraries, which consist of PJSIP, PJMEDIA, and PJNATH, with PJLIB-UTIL and PJLIB as support libraries. This level provides the most flexibility, but it’s also more low level.
+
+Some of the reasons for wanting to use libraries at this level are:
+
+* You only need the individual library (say, PJNATH)
+* You need to be very very tight in footprint (say when things need to be measured in Kilobytes instead of Megabytes)
+* You are not developing a SIP client
+
+Use the corresponding PJSIP, PJMEDIA, and PJNATH manuals and samples for information on how to use the libraries.
