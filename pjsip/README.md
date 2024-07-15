@@ -79,3 +79,29 @@ PJSUA2 wraps together the signaling, media, and NAT traversal functionality into
 
 PJSUA2 provides SWIG interface for generating modules for high level languages such as Java, Python, and C#. In the next sections we will learn how to build and use PJSUA2 in these languages.
 
+# Building PJSUA2
+The PJSUA2 C++ library is built by default by PJSIP build system. Standard C++ library is required.
+
+## Common Requirements
+1. On Linux/MacOS X/Unix, you need to build PJPROJECT with -fPIC option. You can either put it in user.mak file in root pjproject directory like this:
+
+```
+CFLAGS += -fPIC
+```
+
+or you can specify it when calling ./configure:
+
+```
+./configure CFLAGS="-fPIC"
+```
+Then rebuild pjproject.
+
+2. Install SWIG
+For Debian based distributions (such as Ubuntu):
+
+```
+sudo apt-get install swig
+```
+For Windows and other platforms please see https://www.swig.org/download.html
+
+

@@ -1,0 +1,7 @@
+services:
+  app:
+    container_name: app
+    image: ubuntu:24.10
+    tty: true
+    volumes:
+      - ./src:/home/ubuntu/src
