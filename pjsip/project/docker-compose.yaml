@@ -5,3 +5,4 @@ services:
     tty: true
     volumes:
       - ./src:/src
+      - ./pjproject:/pjproject
