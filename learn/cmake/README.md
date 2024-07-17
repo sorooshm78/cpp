@@ -2,6 +2,9 @@
 
 ## Linke
 * [How to Learn CMake in Just 20 Minutes](https://medium.com/swlh/how-to-learn-cmake-in-just-20-minutes-b8eb4767f2c)
+* [learning cmake a beginner guide](https://tuannguyen68.gitbooks.io/learning-cmake-a-beginner-s-guide/content/chap1/chap1.html)
+* [modern cmake](https://cliutils.gitlab.io/modern-cmake/chapters/intro/running.html)
+
 
 ## How to Learn CMake in Just 20 Minutes
 If you have ever worked or written a C or C++ project, you have probably heard of the build system called CMake. For programmers that are new to C or C++, the concept of a separate build system usage a separate language may seem odd. However, knowledge of how to properly to properly compile, build and package a project is absolutely essential knowledge for a C++ programmer. In this guide, the roles CMake plays as a build system will be explained, and the most essential aspects and features of CMake will be discussed. You will learn how to use CMake to build libraries and executables, in hopefully under 20 minutes.
