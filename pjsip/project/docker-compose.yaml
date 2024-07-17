@@ -4,5 +4,4 @@ services:
     container_name: app
     tty: true
     volumes:
-      - ./src:/src
-      - ./pjproject:/pjproject
+      - .:/project
