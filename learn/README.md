@@ -936,3 +936,204 @@ A `.so` file is a shared (or dynamic) library, used mainly in Unix-like operatin
     ```
 
 By understanding the differences and uses of static and shared libraries, you can better manage dependencies and optimize your applications.
+
+Linking libraries in GCC can be done using command-line options. Here's a detailed guide on how to link both static and shared libraries in GCC.
+
+### Linking Static Libraries
+Static libraries have the file extension `.a`. To link a static library with your program, you use the `-l` and `-L` options.
+
+#### Steps to Link a Static Library:
+1. **Create Object Files**: First, compile your source files into object files.
+    ```sh
+    gcc -c file1.c -o file1.o
+    gcc -c file2.c -o file2.o
+    ```
+2. **Create the Static Library**: Use the `ar` command to create a static library from the object files.
+    ```sh
+    ar rcs libmylib.a file1.o file2.o
+    ```
+3. **Link the Static Library**: Use the `-L` option to specify the directory where the library is located and the `-l` option to specify the library name (without the `lib` prefix and `.a` extension).
+    ```sh
+    gcc main.c -L. -lmylib -o myprogram
+    ```
+    - `-L.`: Tells the linker to look in the current directory for libraries.
+    - `-lmylib`: Links against the library `libmylib.a`.
+
+### Linking Shared Libraries
+Shared libraries have the file extension `.so`. Linking a shared library is similar to linking a static library, but you also need to ensure that the shared library can be found at runtime.
+
+#### Steps to Link a Shared Library:
+1. **Create Object Files**: Compile your source files into position-independent code (PIC) object files.
+    ```sh
+    gcc -fPIC -c file1.c -o file1.o
+    gcc -fPIC -c file2.c -o file2.o
+    ```
+2. **Create the Shared Library**: Use the `-shared` option to create a shared library from the object files.
+    ```sh
+    gcc -shared -o libmylib.so file1.o file2.o
+    ```
+3. **Link the Shared Library**: Use the `-L` option to specify the directory where the library is located and the `-l` option to specify the library name.
+    ```sh
+    gcc main.c -L. -lmylib -o myprogram
+    ```
+    - `-L.`: Tells the linker to look in the current directory for libraries.
+    - `-lmylib`: Links against the library `libmylib.so`.
+
+4. **Run the Program with the Shared Library**: Ensure the shared library can be found at runtime. One way to do this is by setting the `LD_LIBRARY_PATH` environment variable.
+    ```sh
+    export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
+    ./myprogram
+    ```
+
+### Complete Example
+Let's put it all together with a full example.
+
+#### Source Files:
+- `file1.c`:
+    ```c
+    #include <stdio.h>
+    void function1() {
+        printf("Function 1\n");
+    }
+    ```
+- `file2.c`:
+    ```c
+    #include <stdio.h>
+    void function2() {
+        printf("Function 2\n");
+    }
+    ```
+- `main.c`:
+    ```c
+    void function1();
+    void function2();
+
+    int main() {
+        function1();
+        function2();
+        return 0;
+    }
+    ```
+
+#### For Static Library:
+1. **Compile Object Files**:
+    ```sh
+    gcc -c file1.c -o file1.o
+    gcc -c file2.c -o file2.o
+    ```
+2. **Create Static Library**:
+    ```sh
+    ar rcs libmylib.a file1.o file2.o
+    ```
+3. **Link Static Library**:
+    ```sh
+    gcc main.c -L. -lmylib -o myprogram
+    ```
+4. **Run Program**:
+    ```sh
+    ./myprogram
+    ```
+
+#### For Shared Library:
+1. **Compile Object Files**:
+    ```sh
+    gcc -fPIC -c file1.c -o file1.o
+    gcc -fPIC -c file2.c -o file2.o
+    ```
+2. **Create Shared Library**:
+    ```sh
+    gcc -shared -o libmylib.so file1.o file2.o
+    ```
+3. **Link Shared Library**:
+    ```sh
+    gcc main.c -L. -lmylib -o myprogram
+    ```
+4. **Run Program with Shared Library**:
+    ```sh
+    export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
+    ./myprogram
+    ```
+
+By following these steps, you can link static and shared libraries in GCC to build your programs.
+
+```
+gcc -L / -l option flags
+gcc -l links with a library file.
+
+gcc -L looks in directory for library files.
+```
+
+Syntax
+```
+$ gcc [options] [source files] [object files] [-Ldir] -llibname [-o outfile]
+```
+ 
+
+Link -l with library name without the lib prefix and the .a or .so extensions.
+
+Examples
+Example1
+For static library file libmath.a use -lmath:
+```
+$ gcc -static myfile.c -lmath -o myfile
+```
+ 
+Example2
+For shared library file libmath.so use -lmath:
+```
+$ gcc myfile.c -lmath -o myfile
+```
+ 
+Example3
+file1.c:
+```
+// file1.c
+#include <stdio.h>
+
+void main()
+{
+    printf("main() run!\n");
+    myfunc();
+}
+```
+ 
+
+file2.c:
+```
+// file2.c
+#include <stdio.h>
+
+void myfunc()
+{
+    printf("myfunc() run!\n");
+}
+```
+ 
+
+Build file2.c, copy object file file2.o to libs directory and archive it to static library libmylib.a:
+```
+$ gcc -c file2.c
+$ mkdir libs
+$ cp file2.o libs
+$ cd libs
+$ ar rcs libmylib.a file2.o
+```
+
+Build file1.c with static library libmylib.a in libs directory.
+
+Build without -L results with an error:
+```
+$ gcc file1.c -lmylib -o outfile
+/usr/bin/ld: cannot find -llibs
+collect2: ld returned 1 exit status
+$
+```
+Build with -L and run:
+
+```
+$ gcc file1.c -Llibs -lmylib -o outfile
+$ ./outfile
+main() run!
+myfunc() run!
+$
+```
