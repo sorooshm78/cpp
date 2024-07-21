@@ -1,5 +1,5 @@
-* [](#make)
-* [](#cmake)
+* [make](#make)
+* [cmake](#cmake)
 
 # make
 ## Why do Makefiles exist?
@@ -631,3 +631,308 @@ target_link_libraries(MyExecutable PRIVATE MyLibrary)
 ### Conclusion
 
 Both static and shared libraries have their own use cases and trade-offs. Choosing the right type depends on your project's requirements regarding deployment, update flexibility, and resource management. Understanding these differences helps in making informed decisions for efficient software development and deployment.
+
+
+## target_link_libraries
+My recommendation is to start simple, and then complicate your project further.
+
+Let me try to explain how linking works in CMake. The idea is that you build modules in CMake, and link them together. Let's ignore header files for now, as they can be all included in your source files.
+
+Say you have file1.cpp, file2.cpp, main.cpp. You add them to your project with:
+```
+ADD_LIBRARY(LibsModule 
+    file1.cpp
+    file2.cpp
+)
+```
+Now you added them to a module called LibsModule. Keep that in mind. Say you want to link to pthread for example that's already in the system. You can combine it with LibsModule using the command:
+
+```
+target_link_libraries(LibsModule -lpthread)
+```
+
+And if you want to link a static library to that too, you do this:
+
+```
+target_link_libraries(LibsModule liblapack.a)
+```
+
+And if you want to add a directory where any of these libraries are 
+located, you do this:
+
+```
+target_link_libraries(LibsModule -L/home/user/libs/somelibpath/)
+```
+
+Now you add an executable, and you link it with your main file:
+
+```
+ADD_EXECUTABLE(MyProgramExecBlaBla main.cpp)
+```
+(I added BlaBla just to make it clear that the name is custom). And then you link LibsModule with your executable module MyProgramExecBlaBla
+
+```
+target_link_libraries(MyProgramExecBlaBla LibsModule)
+```
+
+And this will do it.
+
+What I see in your CMake file is a lot of redundancy. For example, why do you have texture_mapping, which is an executable module in your include directories? So you need to clean this up and follow the simple logic I explained. Hopefully it works.
+
+In summary, it looks like this:
+```
+project (MyProgramExecBlaBla)  #not sure whether this should be the same 
+name of the executable, but I always see that "convention"
+cmake_minimum_required(VERSION 2.8)
+ADD_LIBRARY(LibsModule 
+    file1.cpp
+    file2.cpp
+)
+
+target_link_libraries(LibsModule -lpthread)
+target_link_libraries(LibsModule liblapack.a)
+target_link_libraries(LibsModule -L/home/user/libs/somelibpath/)
+ADD_EXECUTABLE(MyProgramExecBlaBla main.cpp)
+target_link_libraries(MyProgramExecBlaBla LibsModule)
+```
+
+The most important thing to understand is the module structure, where you create modules and link them all together with your executable. Once this works, you can complicate your project further with more details. Good luck!
+
+Note: Keep in mind that this is the simple way to use CMake. The better cross-platform way would be using find_package, which locates a package/library, and provides the libraries and includes in CMake variables so that you could link your program to them. Here's how to do this for boost, for example.
+
+
+## Using target_link_libraries for Linking Libraries
+target_link_libraries() is a function that allows you to specify which libraries a target should link against. It takes the name of the target as its first argument, and a list of libraries as subsequent arguments.
+
+For example, target_link_libraries(myprog mylib) would specify that the myprog target should link against the mylib library.
+
+This function is also used to specify dependencies between targets. If one target depends on another, you can use target_link_libraries() to ensure that the dependent target is built before the dependent one.
+
+Sure! `target_link_libraries` in CMake is a command used to specify which libraries (and targets) a target (like an executable or another library) should be linked against. This helps in building the final executable or library with all the necessary dependencies.
+
+Let's break it down step by step with an easy example.
+
+### Basic Concept
+
+- **Target**: This can be an executable or a library that you are building.
+- **Library**: This is an external or internal library that your target depends on.
+
+### Example
+
+Let's say we have a project where we are building an executable called `myapp` which depends on a library called `mylib`.
+
+Here's a simple directory structure:
+```
+/project
+  |-- CMakeLists.txt
+  |-- myapp.cpp
+  |-- mylib/
+      |-- CMakeLists.txt
+      |-- mylib.cpp
+      |-- mylib.h
+```
+
+### Step-by-Step Guide
+
+#### Step 1: Create `mylib`
+
+In the `mylib/CMakeLists.txt` file, we define the library `mylib`:
+
+```cmake
+# mylib/CMakeLists.txt
+
+add_library(mylib mylib.cpp)
+```
+
+This tells CMake to create a library target named `mylib` from the source file `mylib.cpp`.
+
+#### Step 2: Create `myapp`
+
+In the main `CMakeLists.txt` file, we define the executable and link it with `mylib`:
+
+```cmake
+# CMakeLists.txt (at the root of the project)
+
+cmake_minimum_required(VERSION 3.10)
+project(MyProject)
+
+# Add the library directory
+add_subdirectory(mylib)
+
+# Define the executable
+add_executable(myapp myapp.cpp)
+
+# Link the library to the executable
+target_link_libraries(myapp PRIVATE mylib)
+```
+
+Here's what each line does:
+
+1. **`cmake_minimum_required(VERSION 3.10)`**: This sets the minimum version of CMake required for this project.
+2. **`project(MyProject)`**: This names the project.
+3. **`add_subdirectory(mylib)`**: This tells CMake to process the `CMakeLists.txt` in the `mylib` directory, creating the `mylib` target.
+4. **`add_executable(myapp myapp.cpp)`**: This creates an executable target called `myapp` from the source file `myapp.cpp`.
+5. **`target_link_libraries(myapp PRIVATE mylib)`**: This links the `mylib` library to the `myapp` executable.
+
+### Explanation of `target_link_libraries`
+
+- **`target_link_libraries`**: This command links a target with libraries.
+- **`myapp`**: The target executable we are linking libraries to.
+- **`PRIVATE mylib`**: The `mylib` library we are linking to `myapp`. The `PRIVATE` keyword specifies that `mylib` is only used by `myapp` and is not exposed to other targets that link against `myapp`.
+
+### Result
+
+When you build this project with CMake, it will:
+
+1. Compile `mylib.cpp` into the `mylib` library.
+2. Compile `myapp.cpp` into the `myapp` executable.
+3. Link the `mylib` library to the `myapp` executable so that `myapp` can use the functions and symbols defined in `mylib`.
+
+This way, `target_link_libraries` ensures that all necessary libraries are linked, making sure your final executable has access to all the required code and functionalities.
+
+### Summary
+
+- **`add_library(mylib mylib.cpp)`**: Defines a library.
+- **`add_executable(myapp myapp.cpp)`**: Defines an executable.
+- **`target_link_libraries(myapp PRIVATE mylib)`**: Links the library to the executable.
+
+This is a simple and easy-to-understand way to manage dependencies in CMake projects!
+
+
+
+# .a and .so
+Sure! Let's delve into `.a` and `.so` files, which are types of library files used in software development.
+
+### Static Libraries (.a files)
+A `.a` file is a static library used mainly in Unix-like operating systems. It contains a collection of object files (`.o` files), which are compiled code modules.
+
+#### Characteristics of Static Libraries:
+1. **Static Linking**: When you link a program with a static library, the code from the library is copied into the executable at compile time.
+2. **Size**: The resulting executable is larger because it includes the code from the library.
+3. **Independence**: Once compiled, the executable does not need the `.a` file. The library code is part of the executable.
+4. **No Runtime Overhead**: There’s no overhead of looking up library code at runtime.
+
+#### Creating and Using Static Libraries:
+1. **Create Object Files**:
+    ```sh
+    gcc -c file1.c -o file1.o
+    gcc -c file2.c -o file2.o
+    ```
+2. **Create Static Library**:
+    ```sh
+    ar rcs libmylib.a file1.o file2.o
+    ```
+3. **Link Static Library**:
+    ```sh
+    gcc main.c -L. -lmylib -o myprogram
+    ```
+
+### Shared Libraries (.so files)
+A `.so` file is a shared (or dynamic) library, used mainly in Unix-like operating systems. It is loaded into memory and linked dynamically at runtime.
+
+#### Characteristics of Shared Libraries:
+1. **Dynamic Linking**: When you link a program with a shared library, the code from the library is not copied into the executable. Instead, it is linked at runtime.
+2. **Size**: The resulting executable is smaller because it doesn’t include the code from the library.
+3. **Dependency**: The executable depends on the `.so` file being present at runtime.
+4. **Runtime Overhead**: There is some overhead for looking up library code at runtime, but shared libraries can be shared among multiple programs, reducing overall memory usage.
+
+#### Creating and Using Shared Libraries:
+1. **Create Object Files**:
+    ```sh
+    gcc -fPIC -c file1.c -o file1.o
+    gcc -fPIC -c file2.c -o file2.o
+    ```
+2. **Create Shared Library**:
+    ```sh
+    gcc -shared -o libmylib.so file1.o file2.o
+    ```
+3. **Link Shared Library**:
+    ```sh
+    gcc main.c -L. -lmylib -o myprogram
+    ```
+4. **Run Program with Shared Library**:
+    ```sh
+    export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
+    ./myprogram
+    ```
+
+### Example in Detail
+
+#### Static Library Example
+1. **Code Files**:
+    - `file1.c`:
+        ```c
+        // file1.c
+        #include <stdio.h>
+        void function1() {
+            printf("Function 1\n");
+        }
+        ```
+    - `file2.c`:
+        ```c
+        // file2.c
+        #include <stdio.h>
+        void function2() {
+            printf("Function 2\n");
+        }
+        ```
+    - `main.c`:
+        ```c
+        // main.c
+        void function1();
+        void function2();
+
+        int main() {
+            function1();
+            function2();
+            return 0;
+        }
+        ```
+
+2. **Create Object Files**:
+    ```sh
+    gcc -c file1.c -o file1.o
+    gcc -c file2.c -o file2.o
+    ```
+
+3. **Create Static Library**:
+    ```sh
+    ar rcs libmylib.a file1.o file2.o
+    ```
+
+4. **Link Static Library**:
+    ```sh
+    gcc main.c -L. -lmylib -o myprogram
+    ```
+
+5. **Run Program**:
+    ```sh
+    ./myprogram
+    ```
+
+#### Shared Library Example
+1. **Code Files**: (same as above)
+
+2. **Create Object Files**:
+    ```sh
+    gcc -fPIC -c file1.c -o file1.o
+    gcc -fPIC -c file2.c -o file2.o
+    ```
+
+3. **Create Shared Library**:
+    ```sh
+    gcc -shared -o libmylib.so file1.o file2.o
+    ```
+
+4. **Link Shared Library**:
+    ```sh
+    gcc main.c -L. -lmylib -o myprogram
+    ```
+
+5. **Run Program with Shared Library**:
+    ```sh
+    export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
+    ./myprogram
+    ```
+
+By understanding the differences and uses of static and shared libraries, you can better manage dependencies and optimize your applications.
