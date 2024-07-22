@@ -798,6 +798,110 @@ This way, `target_link_libraries` ensures that all necessary libraries are linke
 
 This is a simple and easy-to-understand way to manage dependencies in CMake projects!
 
+## FindPkgConfig
+* [cmake link](https://cmake.org/cmake/help/latest/module/FindPkgConfig.html)
+
+`pkg_check_modules` is a CMake command used to find and configure packages using the pkg-config system. Pkg-config is a helper tool used when compiling applications and libraries. It provides information about installed libraries on the system, including the necessary compile and link flags.
+
+Here's a step-by-step explanation and example to help you understand `pkg_check_modules`:
+
+### Step-by-Step Explanation
+
+1. **Include the `FindPkgConfig` Module**: First, you need to include the `FindPkgConfig` module in your CMake script. This module provides the `pkg_check_modules` command.
+
+2. **Use `pkg_check_modules`**: Use the `pkg_check_modules` command to check for a specific package. This command will set various variables with the compile and link flags required for the package.
+
+3. **Specify Variables and Options**:
+    - `PREFIX`: The prefix for the variables that will be set.
+    - `REQUIRED` (optional): If specified, the command will fail if the package is not found.
+    - `QUIET` (optional): Suppress output messages.
+    - `PACKAGE-NAME`: The name of the package you want to check.
+
+4. **Variables Set by `pkg_check_modules`**:
+    - `<PREFIX>_FOUND`: Indicates whether the package was found.
+    - `<PREFIX>_VERSION`: The version of the package.
+    - `<PREFIX>_INCLUDE_DIRS`: The include directories for the package.
+    - `<PREFIX>_LIBRARIES`: The libraries to link against.
+    - `<PREFIX>_CFLAGS`: The compile flags.
+    - `<PREFIX>_LDFLAGS`: The linker flags.
+
+### Example
+
+Let's say you want to find and configure the `libpng` package.
+
+#### CMakeLists.txt
+```cmake
+cmake_minimum_required(VERSION 3.10)
+project(MyProject)
+
+# Include the FindPkgConfig module
+find_package(PkgConfig REQUIRED)
+
+# Check for the libpng package
+pkg_check_modules(PNG REQUIRED libpng)
+
+# Include directories for libpng
+include_directories(${PNG_INCLUDE_DIRS})
+
+# Link libraries for libpng
+link_directories(${PNG_LIBRARY_DIRS})
+
+# Add your executable or library
+add_executable(my_executable main.cpp)
+
+# Link the executable with libpng
+target_link_libraries(my_executable ${PNG_LIBRARIES})
+```
+
+#### Explanation
+
+1. **Include the FindPkgConfig module**:
+    ```cmake
+    find_package(PkgConfig REQUIRED)
+    ```
+
+2. **Check for the `libpng` package**:
+    ```cmake
+    pkg_check_modules(PNG REQUIRED libpng)
+    ```
+    - `PNG`: The prefix for the variables.
+    - `REQUIRED`: Ensures the configuration fails if `libpng` is not found.
+    - `libpng`: The name of the package.
+
+3. **Set up include directories**:
+    ```cmake
+    include_directories(${PNG_INCLUDE_DIRS})
+    ```
+    - `${PNG_INCLUDE_DIRS}`: The include directories for `libpng`.
+
+4. **Set up link directories**:
+    ```cmake
+    link_directories(${PNG_LIBRARY_DIRS})
+    ```
+    - `${PNG_LIBRARY_DIRS}`: The library directories for `libpng`.
+
+5. **Add the executable**:
+    ```cmake
+    add_executable(my_executable main.cpp)
+    ```
+
+6. **Link the executable with `libpng`**:
+    ```cmake
+    target_link_libraries(my_executable ${PNG_LIBRARIES})
+    ```
+    - `${PNG_LIBRARIES}`: The libraries to link against for `libpng`.
+
+### Variables Set by `pkg_check_modules`
+
+If `libpng` is found, `pkg_check_modules` will set the following variables:
+- `PNG_FOUND`: TRUE if `libpng` is found.
+- `PNG_VERSION`: The version of `libpng`.
+- `PNG_INCLUDE_DIRS`: The include directories for `libpng`.
+- `PNG_LIBRARIES`: The libraries for `libpng`.
+- `PNG_CFLAGS`: The compile flags for `libpng`.
+- `PNG_LDFLAGS`: The linker flags for `libpng`.
+
+This example demonstrates how to integrate a library using `pkg_check_modules` in a CMake project, providing the necessary compile and link flags automatically.
 
 
 # .a and .so
