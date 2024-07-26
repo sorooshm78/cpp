@@ -1,5 +1,8 @@
 * [make](#make)
 * [cmake](#cmake)
+    * [target_link_libraries](#target_link_libraries)
+    * [FindPkgConfig](#findpkgconfig)
+* [diff a and so](#a-and-so)
 
 # make
 ## Why do Makefiles exist?
@@ -72,7 +75,7 @@ It's important to realize that I'm talking about hello as both a target and a fi
 
 # cmake
 
-## Linke
+## Links
 * [How to Learn CMake in Just 20 Minutes](https://medium.com/swlh/how-to-learn-cmake-in-just-20-minutes-b8eb4767f2c)
 * [learning cmake a beginner guide](https://tuannguyen68.gitbooks.io/learning-cmake-a-beginner-s-guide/content/chap1/chap1.html)
 * [modern cmake](https://cliutils.gitlab.io/modern-cmake/chapters/intro/running.html)
