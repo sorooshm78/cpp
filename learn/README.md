@@ -801,6 +801,115 @@ This is a simple and easy-to-understand way to manage dependencies in CMake proj
 ## FindPkgConfig
 * [cmake link](https://cmake.org/cmake/help/latest/module/FindPkgConfig.html)
 
+### A pkg-config module for CMake.
+Finds the pkg-config executable and adds the pkg_get_variable(), pkg_check_modules() and pkg_search_module() commands. The following variables will also be set:
+
+#### PKG_CONFIG_FOUND
+True if a pkg-config executable was found.
+
+#### PKG_CONFIG_VERSION_STRING
+New in version 2.8.8.
+The version of pkg-config that was found.
+
+#### PKG_CONFIG_EXECUTABLE
+The pathname of the pkg-config program.
+
+#### PKG_CONFIG_ARGN
+New in version 3.22.
+A list of arguments to pass to pkg-config.
+
+### pkg_check_modules
+Checks for all the given modules, setting a variety of result variables in the calling scope.
+```
+pkg_check_modules(<prefix>
+                  [REQUIRED] [QUIET]
+                  [NO_CMAKE_PATH]
+                  [NO_CMAKE_ENVIRONMENT_PATH]
+                  [IMPORTED_TARGET [GLOBAL]]
+                  <moduleSpec> [<moduleSpec>...])
+```
+
+When the REQUIRED argument is given, the command will fail with an error if module(s) could not be found.
+When the QUIET argument is given, no status messages will be printed.
+
+Each <moduleSpec> can be either a bare module name or it can be a module name with a version constraint (operators =, <, >, <= and >= are supported). The following are examples for a module named foo with various constraints:
+
+* foo matches any version.
+* foo<2 only matches versions before 2.
+* foo>=3.1 matches any version from 3.1 or later.
+* foo=1.2.3 requires that foo must be exactly version 1.2.3.
+
+The following variables may be set upon return. Two sets of values exist: One for the common case (<XXX> = <prefix>) and another for the information pkg-config provides when called with the --static option (<XXX> = <prefix>_STATIC).
+
+* \<XXX>_FOUND
+set to 1 if module(s) exist
+
+* \<XXX>_LIBRARIES
+only the libraries (without the '-l')
+
+* \<XXX>_LINK_LIBRARIES
+the libraries and their absolute paths
+
+* \<XXX>_LIBRARY_DIRS
+the paths of the libraries (without the '-L')
+
+* \<XXX>_LDFLAGS
+all required linker flags
+
+* \<XXX>_LDFLAGS_OTHER
+all other linker flags
+
+* \<XXX>_INCLUDE_DIRS
+the '-I' preprocessor flags (without the '-I')
+
+* \<XXX>_CFLAGS
+all required cflags
+
+* \<XXX>_CFLAGS_OTHER
+the other compiler flags
+
+All but <XXX>_FOUND may be a ;-list if the associated variable returned from pkg-config has multiple values.
+
+### pkg_search_module
+The behavior of this command is the same as pkg_check_modules(), except that rather than checking for all the specified modules, it searches for just the first successful match.
+```
+pkg_search_module(<prefix>
+                  [REQUIRED] [QUIET]
+                  [NO_CMAKE_PATH]
+                  [NO_CMAKE_ENVIRONMENT_PATH]
+                  [IMPORTED_TARGET [GLOBAL]]
+                  <moduleSpec> [<moduleSpec>...])
+```
+New in version 3.16: If a module is found, the <prefix>_MODULE_NAME variable will contain the name of the matching module. This variable can be used if you need to run pkg_get_variable().
+
+Example:
+```
+pkg_search_module (BAR libxml-2.0 libxml2 libxml>=2)
+```
+
+#### pkg_get_variable
+New in version 3.4.
+
+Retrieves the value of a pkg-config variable varName and stores it in the result variable resultVar in the calling scope.
+```
+pkg_get_variable(<resultVar> <moduleName> <varName>
+                 [DEFINE_VARIABLES <key>=<value>...])
+```
+If pkg-config returns multiple values for the specified variable, resultVar will contain a ;-list.
+
+Options:
+```
+DEFINE_VARIABLES <key>=<value>...
+```
+New in version 3.28.
+
+Specify key-value pairs to redefine variables affecting the variable retrieved with pkg-config.
+
+For example:
+```
+pkg_get_variable(GI_GIRDIR gobject-introspection-1.0 girdir)
+```
+
 `pkg_check_modules` is a CMake command used to find and configure packages using the pkg-config system. Pkg-config is a helper tool used when compiling applications and libraries. It provides information about installed libraries on the system, including the necessary compile and link flags.
 
 Here's a step-by-step explanation and example to help you understand `pkg_check_modules`:
