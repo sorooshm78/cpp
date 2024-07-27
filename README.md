@@ -521,3 +521,44 @@ Value of LONG_MIN is -2147483647 (-231+1) or less*
 Maximum value for an object of type long int    
 Value of LONG_MAX is 2147483647 (231-1) or greater*
 ```
+
+## sizeof
+The sizeof is a keyword, but it is a compile-time operator that determines the size, in bytes, of a variable or data type.
+
+The sizeof operator can be used to get the size of classes, structures, unions and any other user defined data type.
+
+The syntax of using sizeof is as follows −
+
+sizeof (data type)
+Where data type is the desired data type including classes, structures, unions and any other user defined data type.
+
+Try the following example to understand all the sizeof operator available in C++. Copy and paste following C++ program in test.cpp file and compile and run this program.
+
+```
+#include <iostream>
+using namespace std;
+ 
+int main() {
+   cout << "Size of char : " << sizeof(char) << endl;
+   cout << "Size of int : " << sizeof(int) << endl;
+   cout << "Size of short int : " << sizeof(short int) << endl;
+   cout << "Size of long int : " << sizeof(long int) << endl;
+   cout << "Size of float : " << sizeof(float) << endl;
+   cout << "Size of double : " << sizeof(double) << endl;
+   cout << "Size of wchar_t : " << sizeof(wchar_t) << endl;
+   
+   return 0;
+}
+```
+
+When the above code is compiled and executed, it produces the following result, which can vary from machine to machine −
+
+```
+Size of char : 1
+Size of int : 4
+Size of short int : 2
+Size of long int : 4
+Size of float : 4
+Size of double : 8
+Size of wchar_t : 4
+```
