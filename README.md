@@ -448,3 +448,76 @@ std::string str{"Hello"};  // str is initialized to "Hello"
 - **Braces (`{}`):** Introduced in C++11, preferred for uniform initialization. Prevents narrowing conversions, ensures all members are initialized, and avoids ambiguity.
 
 Using brace initialization is generally recommended for its safety and clarity, especially in modern C++ code.
+
+## limits.h 
+The maximum and minimum size of integral values are quite useful or in simple terms, limits of any integral type plays quite a role in programming. Instead of remembering these values, different macros can be used.
+
+```
+<climits>(limits.h) defines sizes of integral types.
+```
+
+This header defines constants with the limits of fundamental integral types for the specific system and compiler implementation used.
+The limits for fundamental floating-point types are defined in <cfloat> (<float.h>). 
+The limits for width-specific integral types and other typedef types are defined in <cstdint> (<stdint.h>).
+
+Different macro constants are :
+
+1. CHAR_MIN : 
+```
+Minimum value for an object of type char
+Value of CHAR_MIN is either -127 (-27+1) or less* or 0
+```
+
+2. CHAR_MAX :  
+```
+Maximum value for an object of type char
+Value of CHAR_MAX is either 127 (27-1) or 255 (28-1) or greater*    
+```
+
+3. SHRT_MIN :  
+```
+Minimum value for an object of type short int
+Value of SHRT_MIN is -32767 (-215+1) or less*
+```
+
+4. SHRT_MAX :  
+```
+Maximum value for an object of type short int
+Value of SHRT_MAX is 32767 (215-1) or greater*
+```
+
+5. USHRT_MAX :  
+```
+Maximum value for an object of type unsigned short int    
+Value of USHRT_MAX is 65535 (216-1) or greater*
+```
+
+6. INT_MIN :  
+```
+Minimum value for an object of type int    
+Value of INT_MIN is -2147483648 (-231) or less*
+```
+
+7. INT_MAX : 
+```
+Maximum value for an object of type int    
+Value of INT_MAX is 2147483647 ( 231-1)
+```
+
+8. UINT_MAX :  
+```
+Maximum value for an object of type unsigned int    
+Value of UINT_MAX is 4294967295 (232-1) or greater*
+```
+
+9. LONG_MIN :  
+```
+Minimum value for an object of type long int    
+Value of LONG_MIN is -2147483647 (-231+1) or less*
+```
+
+10. LONG_MAX :  
+```
+Maximum value for an object of type long int    
+Value of LONG_MAX is 2147483647 (231-1) or greater*
+```
