@@ -562,3 +562,285 @@ Size of float : 4
 Size of double : 8
 Size of wchar_t : 4
 ```
+
+## Constants
+In C++, a constant is a value that cannot be altered by the program during its execution. Constants are used to define values that remain the same throughout the program. There are several ways to define constants in C++. Let's go through each type with detailed explanations and examples.
+
+### 1. Literal Constants
+Literal constants are the simplest form of constants. They are values written directly in the code. Here are some examples:
+
+- **Integer literals**: `42`, `0`, `-7`
+- **Floating-point literals**: `3.14`, `-0.001`, `2.0e10`
+- **Character literals**: `'a'`, `'Z'`, `'\n'` (newline)
+- **String literals**: `"Hello, World!"`, `"C++"`
+
+Example:
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    int age = 25;          // integer literal
+    double pi = 3.14159;   // floating-point literal
+    char grade = 'A';      // character literal
+    string name = "Alice"; // string literal
+
+    cout << "Age: " << age << endl;
+    cout << "PI: " << pi << endl;
+    cout << "Grade: " << grade << endl;
+    cout << "Name: " << name << endl;
+
+    return 0;
+}
+```
+
+### 2. `const` Keyword
+The `const` keyword is used to define variables whose values cannot be changed after initialization.
+
+Example:
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    const int birthYear = 1995; // constant integer
+    const double gravity = 9.81; // constant floating-point number
+
+    cout << "Birth Year: " << birthYear << endl;
+    cout << "Gravity: " << gravity << endl;
+
+    // Uncommenting the following lines will cause a compilation error
+    // birthYear = 2000;
+    // gravity = 9.8;
+
+    return 0;
+}
+```
+
+### 3. Enumerated Constants (`enum`)
+An `enum` is a user-defined type that consists of a set of named integral constants. This is useful for defining a collection of related constants.
+
+Example:
+```cpp
+#include <iostream>
+using namespace std;
+
+enum Color { RED, GREEN, BLUE };
+
+int main() {
+    Color favoriteColor = BLUE;
+
+    if (favoriteColor == BLUE) {
+        cout << "Your favorite color is blue." << endl;
+    }
+
+    // The underlying values of enum constants are integers starting from 0
+    cout << "Value of RED: " << RED << endl;
+    cout << "Value of GREEN: " << GREEN << endl;
+    cout << "Value of BLUE: " << BLUE << endl;
+
+    return 0;
+}
+```
+
+### 4. `constexpr` Keyword
+The `constexpr` keyword is used to define constants that can be evaluated at compile time. This is useful for defining constants that involve complex expressions.
+
+Example:
+```cpp
+#include <iostream>
+using namespace std;
+
+constexpr int getSquare(int x) {
+    return x * x;
+}
+
+int main() {
+    constexpr int sideLength = 5;
+    constexpr int area = getSquare(sideLength);
+
+    cout << "Side Length: " << sideLength << endl;
+    cout << "Area: " << area << endl;
+
+    return 0;
+}
+```
+
+### 5. `#define` Preprocessor Directive
+The `#define` directive is used to define constant macros. These are replaced by their values before the compilation process begins. However, using `#define` for constants is generally discouraged in favor of `const` or `constexpr` due to better type safety and scope control.
+
+Example:
+```cpp
+#include <iostream>
+using namespace std;
+
+#define PI 3.14159
+#define CIRCLE_AREA(radius) (PI * (radius) * (radius))
+
+int main() {
+    double radius = 4.5;
+    double area = CIRCLE_AREA(radius);
+
+    cout << "Radius: " << radius << endl;
+    cout << "Circle Area: " << area << endl;
+
+    return 0;
+}
+```
+
+### Summary
+- **Literal Constants**: Directly written values (e.g., `42`, `3.14`, `"Hello"`).
+- **`const` Keyword**: Defines immutable variables.
+- **`enum`**: Defines a set of related integral constants.
+- **`constexpr` Keyword**: For compile-time evaluated constants.
+- **`#define` Preprocessor Directive**: Defines macros, though less preferred.
+
+Each of these types has its own use case and advantages, providing flexibility in how constants are defined and used in C++ programs.
+
+## constexpr
+constexpr is a feature added in C++ 11. The main idea is a performance improvement of programs by doing computations at compile time rather than run time. Note that once a program is compiled and finalized by the developer, it is run multiple times by users. The idea is to spend time in compilation and save time at run time (similar to template metaprogramming).  constexpr specifies that the value of an object or a function can be evaluated at compile-time and the expression can be used in other constant expressions. 
+
+Example:
+```
+// C++ program to demonstrate constexpr function for product
+// of two numbers. By specifying constexpr, we suggest
+// compiler to evaluate value at compile time
+#include <iostream>
+
+constexpr int product(int x, int y) { return (x * y); }
+
+int main()
+{
+    constexpr int x = product(10, 20);
+    std::cout << x;
+    return 0;
+}
+```
+Output
+```
+200
+```
+A function be declared as constexpr
+
+* In C++ 11, a constexpr function should contain only one return statement. C++ 14 allows more than one statement.
+* constexpr function should refer only to constant global variables.
+* constexpr function can call only other constexpr functions not simple functions.
+* The function should not be of a void type.
+* In C++11, prefix increment (++v) was not allowed in constexpr function but this restriction has been removed in C++14.
+
+It might seem like unnecessary to write a function that just returns the multiplication of a given number as constexpr. Other than performance improvement where could this feature be useful?
+
+The main advantage of this feature is that it allows us to use a function to evaluate compile-time constant. With this, we could calculate the size of the array at compile time which was not possible before.
+
+```
+// C++ program to demonstrate constexpr function to evaluate
+// the size of array at compile time.
+#include <iostream>
+
+constexpr int product(int x, int y) { return (x * y); }
+
+int main()
+{
+    int arr[product(2, 3)] = {1, 2, 3, 4, 5, 6};
+    std::cout << arr[5];
+    return 0;
+}
+```
+
+Output
+```
+6
+```
+
+Another practical use case is to convert the unit from one system to another. E.g., trigonometric function in C/C++ takes angle in radian whereas most of the people finds easier to use angle in degree. So, we could write ConvertDegreeToRadian() function as constexpr without compromising with performance and readability of the code.
+
+```
+#include <iostream>
+using namespace std;
+const double PI = 3.14159265359;
+constexpr double ConvertDegreeToRadian(const double& dDegree)
+{
+    return (dDegree * (PI / 180));
+}
+
+int main() 
+{
+    auto dAngleInRadian = ConvertDegreeToRadian(90.0);
+    cout << "Angle in radian: " << dAngleInRadian;
+    return 0;
+}
+```
+
+Output
+```
+Angle in radian: 1.5708
+```
+
+Example of performance improvement by constexpr: 
+```
+// A C++ program to demonstrate the use of constexpr 
+#include<iostream>  
+
+constexpr long int fib(int n) 
+{ 
+    return (n <= 1) ? n : fib(n-1) + fib(n-2); 
+} 
+
+int main () 
+{ 
+    // value of res is computed at compile time. 
+    constexpr long int res = fib(30); 
+    std::cout << res; 
+    return 0; 
+} 
+```
+
+Output
+```
+832040
+```
+When the above program is run on GCC, it takes 0.003 seconds (We can measure time using the time command) If we remove const from the below line, then the value of fib(5) is not evaluated at compile-time, because the result of constexpr is not used in a const expression.
+
+```
+Change,
+  constexpr long int res = fib(30);  
+To,
+  long int res = fib(30);
+```
+
+After making the above change, the time taken by the program becomes higher by 0.017 seconds.
+
+constexpr with constructors: A constructor that is declared with a constexpr specifier is a constexpr constructor also constexpr can be used in the making of constructors and objects. A constexpr constructor is implicitly inline.
+
+Restrictions on constructors that can use constexpr:
+* No virtual base class
+* Each parameter should be literal
+* It is not a try block function
+
+Example:
+```
+// C++ program to demonstrate uses 
+// of constexpr in constructor 
+#include <iostream> 
+
+// A class with constexpr 
+// constructor and function 
+class Rectangle 
+{ 
+    int _h, _w; 
+public: 
+    // A constexpr constructor 
+    constexpr Rectangle(int h, int w) : _h(h), _w(w) {} 
+    
+    constexpr int getArea() const { return _h * _w; } 
+}; 
+
+// driver program to test function 
+int main() 
+{ 
+    // Below object is initialized at compile time 
+    constexpr Rectangle obj(10, 20); 
+    std::cout << obj.getArea(); 
+    return 0; 
+} 
+```
