@@ -1293,3 +1293,303 @@ Knowing the difference also helps you to easily identify non-composable and comp
 Now that you understand the difference between expressions and statements in programming, and you know why understanding the differences is important, you can identify pieces of code as expressions or statements while coding.
 
 Next time, we'll go even further and help make learning a second programming language easier.
+
+## How do I catch a Ctrl+C event in C++?
+The CTRL + C is used to send an interrupt to the current executing task. In this program, we will see how to catch the CTRL + C event using C++.
+
+The CTRL + C is one signal in C or C++. So we can catch by signal catching technique. For this signal, the code is SIGINT (Signal for Interrupt). Here the signal is caught by signal() function. Then one callback address is passed to call function after getting the signal.
+
+Please see the program to get the better idea.
+
+Example
+```
+#include <unistd.h>
+#include <iostream>
+#include <cstdlib>
+#include <signal.h>
+using namespace std;
+// Define the function to be called when ctrl-c (SIGINT) is sent to process
+void signal_callback_handler(int signum) {
+   cout << "Caught signal " << signum << endl;
+   // Terminate program
+   exit(signum);
+}
+int main(){
+   // Register signal and signal handler
+   signal(SIGINT, signal_callback_handler);
+   while(true){
+      cout << "Program processing..." << endl;
+      sleep(1);
+   }
+   return EXIT_SUCCESS;
+}
+```
+
+Output
+```
+$ g++ test.cpp
+$ ./a.out
+Program processing...
+Program processing...
+Program processing...
+Program processing...
+Program processing...
+Program processing...
+^CCaught signal 2
+```
+
+## Signal Handling
+Signals are the interrupts delivered to a process by the operating system which can terminate a program prematurely. You can generate interrupts by pressing Ctrl+C on a UNIX, LINUX, Mac OS X or Windows system.
+
+There are signals which can not be caught by the program but there is a following list of signals which you can catch in your program and can take appropriate actions based on the signal. These signals are defined in C++ header file <csignal>.
+
+Sr.No	Signal & Description
+1. SIGABRT
+Abnormal termination of the program, such as a call to abort.
+
+2. SIGFPE
+An erroneous arithmetic operation, such as a divide by zero or an operation resulting in overflow.
+
+3. SIGILL
+Detection of an illegal instruction.
+
+4. SIGINT
+Receipt of an interactive attention signal.
+
+5. SIGSEGV
+An invalid access to storage.
+
+6. SIGTERM
+A termination request sent to the program.
+
+### The signal() Function
+C++ signal-handling library provides function signal to trap unexpected events. Following is the syntax of the signal() function −
+
+```
+void (*signal (int sig, void (*func)(int)))(int); 
+```
+
+Keeping it simple, this function receives two arguments: first argument as an integer which represents signal number and second argument as a pointer to the signal-handling function.
+
+Let us write a simple C++ program where we will catch SIGINT signal using signal() function. Whatever signal you want to catch in your program, you must register that signal using signal function and associate it with a signal handler. Examine the following example −
+
+```
+#include <iostream>
+#include <csignal>
+
+using namespace std;
+
+void signalHandler( int signum ) {
+   cout << "Interrupt signal (" << signum << ") received.\n";
+
+   // cleanup and close up stuff here  
+   // terminate program  
+
+   exit(signum);  
+}
+
+int main () {
+   // register signal SIGINT and signal handler  
+   signal(SIGINT, signalHandler);  
+
+   while(1) {
+      cout << "Going to sleep...." << endl;
+      sleep(1);
+   }
+
+   return 0;
+}
+```
+When the above code is compiled and executed, it produces the following result −
+```
+Going to sleep....
+Going to sleep....
+Going to sleep....
+```
+
+Now, press Ctrl+c to interrupt the program and you will see that your program will catch the signal and would come out by printing something as follows −
+```
+Going to sleep....
+Going to sleep....
+Going to sleep....
+Interrupt signal (2) received.
+```
+
+### The raise() Function
+You can generate signals by function raise(), which takes an integer signal number as an argument and has the following syntax.
+```
+int raise (signal sig);
+```
+
+Here, sig is the signal number to send any of the signals: SIGINT, SIGABRT, SIGFPE, SIGILL, SIGSEGV, SIGTERM, SIGHUP. Following is the example where we raise a signal internally using raise() function as follows −
+
+```
+#include <iostream>
+#include <csignal>
+
+using namespace std;
+
+void signalHandler( int signum ) {
+   cout << "Interrupt signal (" << signum << ") received.\n";
+
+   // cleanup and close up stuff here  
+   // terminate program  
+
+   exit(signum);  
+}
+
+int main () {
+   int i = 0;
+   // register signal SIGINT and signal handler  
+   signal(SIGINT, signalHandler);  
+
+   while(++i) {
+      cout << "Going to sleep...." << endl;
+      if( i == 3 ) {
+         raise( SIGINT);
+      }
+      sleep(1);
+   }
+
+   return 0;
+}
+```
+When the above code is compiled and executed, it produces the following result and would come out automatically −
+```
+Going to sleep....
+Going to sleep....
+Going to sleep....
+Interrupt signal (2) received
+```
+
+In C++, signals are a form of inter-process communication used to notify a process that a specific event has occurred. The signals you've mentioned (`SIGABRT`, `SIGFPE`, `SIGILL`, `SIGINT`, `SIGSEGV`, and `SIGTERM`) are standard signals defined in the POSIX standard, and they are used to handle various runtime errors and conditions.
+
+Let's go through each one in detail, with examples to illustrate how they might occur.
+
+### 1. **SIGABRT (Signal Abort)**
+   - **Description**: `SIGABRT` is generated when a process calls the `abort()` function. This function is usually called by the program itself, often when an unrecoverable error is detected. The signal typically results in the termination of the process and can produce a core dump for debugging.
+   - **Common Cause**: Explicit call to `abort()`, or in some cases, library functions (like `assert()` failure).
+   - **Example**:
+     ```cpp
+     #include <iostream>
+     #include <cstdlib>
+
+     int main() {
+         std::cout << "Before abort" << std::endl;
+         abort();  // This will raise SIGABRT
+         std::cout << "After abort" << std::endl; // This line will not be executed
+         return 0;
+     }
+     ```
+     - **Explanation**: In the example, `abort()` is called explicitly, causing the program to terminate and raise `SIGABRT`. The line after `abort()` is never executed.
+
+### 2. **SIGFPE (Signal Floating-Point Exception)**
+   - **Description**: `SIGFPE` is sent to a process when an erroneous arithmetic operation is performed, such as division by zero or an overflow.
+   - **Common Cause**: Division by zero, integer overflow, or other floating-point errors.
+   - **Example**:
+     ```cpp
+     #include <iostream>
+     #include <csignal>
+
+     int main() {
+         int x = 0;
+         int y = 1;
+         std::cout << "Before division by zero" << std::endl;
+         int z = y / x;  // This will raise SIGFPE
+         std::cout << "After division by zero" << std::endl;
+         return 0;
+     }
+     ```
+     - **Explanation**: In the example, the division `y / x` attempts to divide by zero, which causes a `SIGFPE` signal. This results in program termination.
+
+### 3. **SIGILL (Signal Illegal Instruction)**
+   - **Description**: `SIGILL` is generated when the process attempts to execute an illegal, malformed, or privileged instruction. This can occur due to corruption in the executable, or a bug that causes the program to jump to an invalid code location.
+   - **Common Cause**: Executing an illegal machine instruction or a corrupted binary.
+   - **Example**:
+     ```cpp
+     #include <iostream>
+     #include <csignal>
+
+     void illegal_instruction() {
+         raise(SIGILL);  // This will explicitly raise SIGILL
+     }
+
+     int main() {
+         std::cout << "Before illegal instruction" << std::endl;
+         illegal_instruction();
+         std::cout << "After illegal instruction" << std::endl; // This line will not be executed
+         return 0;
+     }
+     ```
+     - **Explanation**: The `raise(SIGILL)` function is used to manually generate a `SIGILL` signal. Normally, this signal would be raised by executing invalid instructions rather than being manually triggered.
+
+### 4. **SIGINT (Signal Interrupt)**
+   - **Description**: `SIGINT` is sent when a user interrupts the program by pressing `Ctrl+C`. It is typically used to request that a process terminates gracefully.
+   - **Common Cause**: User presses `Ctrl+C` in the terminal.
+   - **Example**:
+     ```cpp
+     #include <iostream>
+     #include <csignal>
+
+     void handle_sigint(int sig) {
+         std::cout << "Caught SIGINT (" << sig << "). Exiting..." << std::endl;
+         exit(0);
+     }
+
+     int main() {
+         signal(SIGINT, handle_sigint);  // Register the signal handler
+         std::cout << "Press Ctrl+C to exit..." << std::endl;
+         while (true) { }  // Infinite loop, waiting for Ctrl+C
+         return 0;
+     }
+     ```
+     - **Explanation**: In this example, `signal(SIGINT, handle_sigint);` registers a handler that will be invoked when `SIGINT` is received (when the user presses `Ctrl+C`). The handler prints a message and exits the program.
+
+### 5. **SIGSEGV (Signal Segmentation Violation)**
+   - **Description**: `SIGSEGV` is sent to a process when it makes an invalid memory reference, such as dereferencing a null or dangling pointer.
+   - **Common Cause**: Dereferencing null pointers, accessing memory out of bounds.
+   - **Example**:
+     ```cpp
+     #include <iostream>
+
+     int main() {
+         int *ptr = nullptr;
+         std::cout << "Before dereferencing nullptr" << std::endl;
+         *ptr = 42;  // This will raise SIGSEGV
+         std::cout << "After dereferencing nullptr" << std::endl; // This line will not be executed
+         return 0;
+     }
+     ```
+     - **Explanation**: The program attempts to dereference a null pointer (`ptr`), causing a segmentation fault and raising `SIGSEGV`.
+
+### 6. **SIGTERM (Signal Termination)**
+   - **Description**: `SIGTERM` is a signal used to request graceful termination of a process. Unlike `SIGKILL`, it can be caught, blocked, or ignored, allowing the process to clean up resources before exiting.
+   - **Common Cause**: Termination request from another process or system (e.g., `kill` command).
+   - **Example**:
+     ```cpp
+     #include <iostream>
+     #include <csignal>
+
+     void handle_sigterm(int sig) {
+         std::cout << "Caught SIGTERM (" << sig << "). Cleaning up and exiting..." << std::endl;
+         exit(0);
+     }
+
+     int main() {
+         signal(SIGTERM, handle_sigterm);  // Register the signal handler
+         std::cout << "Waiting for SIGTERM..." << std::endl;
+         while (true) { }  // Infinite loop, waiting for SIGTERM
+         return 0;
+     }
+     ```
+     - **Explanation**: Similar to `SIGINT`, `SIGTERM` can be caught using a signal handler. This allows the program to clean up resources or perform specific actions before terminating.
+
+### Summary
+- **`SIGABRT`**: Abort signal, typically from `abort()`.
+- **`SIGFPE`**: Floating-point exception, like division by zero.
+- **`SIGILL`**: Illegal instruction, often from executing invalid code.
+- **`SIGINT`**: Interrupt signal, typically from `Ctrl+C`.
+- **`SIGSEGV`**: Segmentation fault, usually from invalid memory access.
+- **`SIGTERM`**: Termination request, allowing graceful shutdown.
+
+Each of these signals is critical in handling runtime errors or providing ways to manage program termination effectively.
