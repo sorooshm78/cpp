@@ -27,6 +27,10 @@ int main() {
     constexpr double max1 = 1.4 * square(dmv); // OK if square(17) is a constant expression
     // constexpr double max2 = 1.4 * square(var); // error: var is not a constant expression
     const double max3 = 1.4 * square(var);  // OK, may be evaluated at run time
+    // constexpr double number = max3; // error
+
+    // define varible or const in compile time or run-time
+    // what diffrent between line 27 and line 30
 
     vector<double> v {1.2, 3.4, 4.5}; // v is not a constant
     const double s1 = sum(v); // OK: evaluated at run time
