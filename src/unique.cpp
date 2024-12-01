@@ -56,6 +56,15 @@ int main() {
 
     cout << "//////////////////////////////" << endl;
 
+    unique_ptr<Consol> console(new Consol());
+    console.get()->Print();
+    console->Print();
+    console.reset();
+    console->Print();
+
+
+    cout << "//////////////////////////////" << endl;
+
     UniquePtr<Consol> c(new Consol());
     c.get()->Print();
     c->Print();
