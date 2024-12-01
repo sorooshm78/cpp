@@ -25,6 +25,10 @@ public:
         return pointer;
     }
 
+    bool operator!() {
+        return pointer == nullptr;
+    }
+
     T *get() {
         return pointer;
     }
@@ -60,14 +64,20 @@ int main() {
     console.get()->Print();
     console->Print();
     console.reset();
+    if(!console) {
+        cout << "pointer is nullptr!" << endl;
+    }
     console->Print();
 
 
     cout << "//////////////////////////////" << endl;
 
-    UniquePtr<Consol> c(new Consol());
-    c.get()->Print();
-    c->Print();
-    c.reset();
-    c->Print();
+    UniquePtr<Consol> c_ptr(new Consol());
+    c_ptr.get()->Print();
+    c_ptr->Print();
+    c_ptr.reset();
+    if(!c_ptr) {
+        cout << "pointer is nullptr!" << endl;
+    }
+    c_ptr->Print();
 }
