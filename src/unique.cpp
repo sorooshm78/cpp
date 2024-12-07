@@ -13,6 +13,26 @@ public:
         this->pointer = pointer;
     }
 
+    UniquePtr(const UniquePtr&) = delete;
+    UniquePtr& operator=(const UniquePtr&) = delete;
+
+    UniquePtr(UniquePtr&& other) {
+        pointer = other.pointer;
+        other.pointer = nullptr;
+    }
+
+    UniquePtr& operator=(UniquePtr&& other) {
+        if (this == &other)
+            return *this;
+
+        delete pointer;
+
+        pointer = other.pointer;
+        other.pointer = nullptr;
+
+        return *this;
+    }
+
     ~UniquePtr() {
         delete pointer;
     }
@@ -69,7 +89,6 @@ int main() {
     }
     console->Print();
 
-
     cout << "//////////////////////////////" << endl;
 
     UniquePtr<Consol> c_ptr(new Consol());
@@ -80,4 +99,13 @@ int main() {
         cout << "pointer is nullptr!" << endl;
     }
     c_ptr->Print();
+
+    cout << "//////////////////////////////" << endl;
+
+    UniquePtr<Consol> c_org(new Consol());
+    c_org.get()->Print();
+    UniquePtr<Consol> c_copy = move(c_org);
+    c_org.get()->Print();
+    c_copy.get()->Print();
+
 }
