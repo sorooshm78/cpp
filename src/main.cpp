@@ -5,63 +5,6 @@
 using namespace std;
 
 
-// template<typename T>
-// class UniquePtr {
-// private:
-//     T *pointer;
-//
-// public:
-//     UniquePtr(T *pointer) {
-//         this->pointer = pointer;
-//     }
-//
-//     UniquePtr(const UniquePtr&) = delete;
-//     UniquePtr& operator=(const UniquePtr&) = delete;
-//
-//     UniquePtr(UniquePtr&& other) {
-//         pointer = other.pointer;
-//         other.pointer = nullptr;
-//     }
-//
-//     UniquePtr& operator=(UniquePtr&& other) {
-//         if (this == &other)
-//             return *this;
-//
-//         delete pointer;
-//
-//         pointer = other.pointer;
-//         other.pointer = nullptr;
-//
-//         return *this;
-//     }
-//
-//     ~UniquePtr() {
-//         delete pointer;
-//     }
-//
-//     T operator*() {
-//         return *pointer;
-//     }
-//
-//     T *operator->() {
-//         return pointer;
-//     }
-//
-//     bool operator!() {
-//         return pointer == nullptr;
-//     }
-//
-//     T *get() {
-//         return pointer;
-//     }
-//
-//     void reset() {
-//         delete pointer;
-//         pointer = nullptr;
-//     }
-// };
-
-
 class Consol {
 public:
     void Print() {
@@ -109,5 +52,4 @@ int main() {
     UniquePtr<Consol> c_copy = move(c_org);
     c_org.get()->Print();
     c_copy.get()->Print();
-
 }
