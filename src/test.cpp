@@ -85,4 +85,3 @@ TEST(UniquePtrTest, DereferencingNullPointer)
 
     EXPECT_EQ(ptr.get(), nullptr);
 }
-
