@@ -2,22 +2,26 @@
 #include "unique.h"
 
 
-class Something {
+class Something
+{
 public:
-    int returnZero() {
+    int returnZero()
+    {
         return 0;
     }
 };
 
 
-TEST(UniquePtrTest, ConstructionAndDereference) {
+TEST(UniquePtrTest, ConstructionAndDereference)
+{
     UniquePtr<int> ptr(new int(10));
 
     EXPECT_EQ(*ptr, 10);
 }
 
 
-TEST(UniquePtrTest, MoveConstructor) {
+TEST(UniquePtrTest, MoveConstructor)
+{
     UniquePtr<int> ptr1(new int(20));
     UniquePtr<int> ptr2(std::move(ptr1));
 
@@ -26,7 +30,8 @@ TEST(UniquePtrTest, MoveConstructor) {
 }
 
 
-TEST(UniquePtrTest, MoveAssignment) {
+TEST(UniquePtrTest, MoveAssignment)
+{
     UniquePtr<int> ptr1(new int(30));
     UniquePtr<int> ptr2(new int(40));
 
@@ -37,7 +42,8 @@ TEST(UniquePtrTest, MoveAssignment) {
 }
 
 
-TEST(UniquePtrTest, Reset) {
+TEST(UniquePtrTest, Reset)
+{
     UniquePtr<int> ptr(new int(50));
 
     EXPECT_EQ(*ptr, 50);
@@ -48,7 +54,8 @@ TEST(UniquePtrTest, Reset) {
 }
 
 
-TEST(UniquePtrTest, NotOperator) {
+TEST(UniquePtrTest, NotOperator)
+{
     UniquePtr<int> ptr1(new int(60));
     UniquePtr<int> ptr2(nullptr);
 
@@ -57,14 +64,25 @@ TEST(UniquePtrTest, NotOperator) {
 }
 
 
-TEST(UniquePtrTest, Get) {
+TEST(UniquePtrTest, Get)
+{
     UniquePtr<int> ptr(new int(70));
 
     EXPECT_EQ(*ptr.get(), 70);
 }
 
-TEST(UniquePtrTest, CallFunctionClass){
+TEST(UniquePtrTest, CallFunctionClass)
+{
     UniquePtr<Something> ptr(new Something);
 
     EXPECT_EQ(ptr.get()->returnZero(), 0);
 }
+
+
+TEST(UniquePtrTest, DereferencingNullPointer)
+{
+    UniquePtr<Something> ptr(nullptr);
+
+    EXPECT_EQ(ptr.get(), nullptr);
+}
+
