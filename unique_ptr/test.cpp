@@ -85,3 +85,12 @@ TEST(UniquePtrTest, DereferencingNullPointer)
 
     EXPECT_EQ(ptr.get(), nullptr);
 }
+
+
+TEST(UniquePtrTest, ExistingPointerAsInput)
+{
+    Something *something = new Something();
+    UniquePtr<Something> ptr(something);
+
+    EXPECT_EQ(ptr.get(), something);
+}
