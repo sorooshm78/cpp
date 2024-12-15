@@ -54,6 +54,21 @@ TEST(UniquePtrTest, Reset)
 }
 
 
+TEST(UniquePtrTest, Release)
+{
+    UniquePtr<int> ptr(new int(50));
+
+    EXPECT_EQ(*ptr, 50);
+
+    const int* ptr2 = ptr.release();
+
+    EXPECT_EQ(ptr.get(), nullptr);
+    EXPECT_EQ(*ptr2, 50);
+
+    delete ptr2;
+}
+
+
 TEST(UniquePtrTest, NotOperator)
 {
     UniquePtr<int> ptr1(new int(60));

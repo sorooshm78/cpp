@@ -52,3 +52,10 @@ void UniquePtr<T>::reset() {
     delete pointer;
     pointer = nullptr;
 }
+
+template<typename T>
+T* UniquePtr<T>::release() {
+    T* temp = pointer;
+    pointer = nullptr;
+    return temp;
+}

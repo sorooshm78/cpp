@@ -14,10 +14,11 @@ public:
     ~UniquePtr();
 
     T operator*();
-    T *operator->();
+    T* operator->();
     bool operator!();
-    T *get();
+    T* get();
     void reset();
+    T* release();
 };
 
 #include "unique-inl.h"
