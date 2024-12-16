@@ -16,6 +16,7 @@ public:
     T operator*();
     T* operator->();
     bool operator!();
+    operator bool();
     T* get();
     void reset();
     T* release();

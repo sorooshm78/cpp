@@ -11,7 +11,7 @@
 * [X] split to header -inl.h
 * [X] existing pointer as input in ctor
 * [X] implement release method
-* [ ] implement operator bool method
+* [X] implement operator bool method
  
 ---
 

@@ -109,3 +109,11 @@ TEST(UniquePtrTest, ExistingPointerAsInput)
 
     EXPECT_EQ(ptr.get(), something);
 }
+
+TEST(UniquePtrTest, OperatorBool) {
+    UniquePtr<int> ptr1(new int(42));
+    EXPECT_TRUE(static_cast<bool>(ptr1));
+
+    UniquePtr<int> ptr2(nullptr);
+    EXPECT_FALSE(static_cast<bool>(ptr2));
+}

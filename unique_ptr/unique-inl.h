@@ -43,6 +43,11 @@ bool UniquePtr<T>::operator!() {
 }
 
 template<typename T>
+UniquePtr<T>::operator bool(){
+    return pointer != nullptr;
+}
+
+template<typename T>
 T* UniquePtr<T>::get() {
     return pointer;
 }
